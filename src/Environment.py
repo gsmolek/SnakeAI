@@ -3,11 +3,14 @@
 """
 Created on Fri Aug 13 11:05:19 2021
 
-@author: popos
+@author: GSMolek
 """
 from tkinter import *
 from PIL import ImageTk,Image
 from Snake import Snake
+from QLearning import QLearning
+import time
+
 class Environment():
     def __init__(self, board_size, number_of_rows, number_of_columns, blocks_color, frame_color) :
         self.window = Tk()
@@ -44,4 +47,10 @@ class Environment():
                 self.environment_blocks.append(self.canvas.create_rectangle(x0,y0,x1,y1,fill = self.blocks_color,outline = self.frame_color,))
 
 env = Environment(600,13,13,blocks_color = "#6bb578",frame_color = "#cbd1cc")
-snake = Snake(env.board_size,env.window, env.canvas,"#2be3c7","#000000", 13, 13, 3)        
+snake = Snake(env.board_size,env.window, env.canvas,"#2be3c7","#000000", 13, 13, 5)
+q = QLearning(1, 1, 1, 13, 13, 4)
+q.print_table()
+time.sleep(1)
+#env.window.after(1000,snake.move(0))
+snake.move(0)
+env.window.update()     

@@ -3,7 +3,7 @@
 """
 Created on Fri Aug 13 23:42:38 2021
 
-@author: popos
+@author: GSMolek
 """
 import random
 #Actions [Up = 0, Down = 1, Left = 2 , Right = 3]
@@ -22,6 +22,7 @@ class Snake:
         self.block_height = int(self.board_size / self.number_of_rows)
         self.block_width = int(self.board_size / self.number_of_columns)
         self.unallowed_actions=[1, 0, 3, 2]
+        self.hit = False
         """
         For snake heading of - 0(up) : 1(down) not allowed
                               1(down) : 0(up) not allowed
@@ -157,7 +158,62 @@ class Snake:
                 return True
             return False
     
+    def is_hit(self):
+        """
+        if the snake hit himself or a wall
+
+        Returns
+        -------
+        bool
+            True if a hit detected
+            False otherwise.
+
+        """
+        i,j = self.snake[-1]
+        snake_tail = self.snake[0:self.snake_length-1]
+        if (i,j) in snake_tail or i >= self.number_of_columns or j >= self.number_of_rows or j<0 or i<0 :
+            return True
+        return False
+    
+    
     def move(self, action):
+        """
+        moves the snake one step twards up, down, right or left position
+        updates the arrays snake and snake_objects
+        delets the snakes tail from the canvas and adds a block to the new position
+
+        Parameters
+        ----------
+        action : int
+            integer between 0-3 indicating the direction of movement, where Up = 0, Down = 1, Left = 2, Right = 3.
+
+        Returns
+        -------
+        None.
+
+        """
         if self.is_move_allowed(action):
+            i,j = self.snake[-1]
+            self.snake.pop(0)
             if action == 0 :
-                
+                self.snake.append((i,j-1))
+            elif action == 1 :
+                self.snake.append((i,j+1))
+            elif action == 2 :
+                self.snake.append((i-1,j))
+            elif action == 3 :
+                self.snake.append((i+1,j))
+            i,j = self.snake[-1]
+            if self.is_hit():
+                self.hit = True
+                print("h")
+                return
+            x0 = i * self.block_height
+            y0 = j * self.block_width
+            x1 = x0 + self.block_height
+            y1 = y0 + self.block_width
+            self.snake_objects.append(self.canvas.create_rectangle(x0, y0, x1, y1, fill = self.color, outline = self.outline_color))
+            self.canvas.delete(self.snake_objects[0])
+            
+
+        
