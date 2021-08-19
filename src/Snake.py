@@ -170,7 +170,10 @@ class Snake:
 
         """
         i,j = self.snake[-1]
-        snake_tail = self.snake[0:self.snake_length-1]
+        snake_tail = self.snake[0:self.snake_length - 2]
+        print("tail: ")
+        print(str(i)+", "+str(j))
+        print(snake_tail)
         if (i,j) in snake_tail or i >= self.number_of_columns or j >= self.number_of_rows or j<0 or i<0 :
             return True
         return False
@@ -194,7 +197,6 @@ class Snake:
         """
         if self.is_move_allowed(action):
             i,j = self.snake[-1]
-            self.snake.pop(0)
             if action == 0 :
                 self.snake.append((i,j-1))
             elif action == 1 :
@@ -208,12 +210,16 @@ class Snake:
                 self.hit = True
                 print("h")
                 return
-            x0 = i * self.block_height
-            y0 = j * self.block_width
-            x1 = x0 + self.block_height
-            y1 = y0 + self.block_width
-            self.snake_objects.append(self.canvas.create_rectangle(x0, y0, x1, y1, fill = self.color, outline = self.outline_color))
-            self.canvas.delete(self.snake_objects[0])
+            else:
+                x0 = i * self.block_height
+                y0 = j * self.block_width
+                x1 = x0 + self.block_height
+                y1 = y0 + self.block_width
+                self.snake_objects.append(self.canvas.create_rectangle(x0, y0, x1, y1, fill = self.color, outline = self.outline_color))
+                self.snake.pop(0)
+                self.canvas.delete(self.snake_objects[0])
+                self.snake_objects.pop(0)
+                self.window.update()
             
 
         
