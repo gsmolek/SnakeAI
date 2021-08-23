@@ -30,10 +30,27 @@ class Snake:
                               3(Right) : 2(left) not allowed
         """
         self.create_snake()
-        print(self.snake)
         self.draw_agent_object()
         self.heading_to = self.initialize_heading()
+    
+    def restart_snake(self):
+        self.delete_snake()
+        self.unallowed_actions=[1, 0, 3, 2]
+        self.snake = []
+        self.snake_objects = []
+        self.hit = False
+        flag = 0
+        while(flag==0):
+            self.delete_snake()
+            flag=self.create_snake()
+        self.heading_to = self.initialize_heading()
+        self.draw_agent_object()
         
+    def delete_snake(self):
+        for i in self.snake_objects:
+            self.canvas.delete(i)
+        self.snake_objects = []
+        self.snake = []
     def random_body(self,i = -2, j = -2 ):
         """
         Parameters
@@ -87,13 +104,18 @@ class Snake:
         j=-2
         for k in range(self.snake_length):
             flag=1
+            count = 0
             while(flag):
+                count+=1
+                if count == 100 :
+                    return 0
                 i_new,j_new = self.random_body(i,j)
                 if i_new != -2 and j_new != -2 and i_new != -1 and j_new != -1 and i_new != self.number_of_rows and j_new != self.number_of_columns and (i_new,j_new) not in self.snake:
                     i = i_new
                     j = j_new
                     self.snake.append((i,j))
                     flag = 0
+        return 1
                 
     def draw_agent_object(self) :
         """
@@ -126,14 +148,21 @@ class Snake:
         """
         i_head,j_head = self.snake[-1]
         i_body,j_body = self.snake[self.snake_length-2]
-        
-        if i_body == i_head and j_body-1 == j_head:
+        a = j_head - 1
+        b = i_head
+        c = j_head + 1
+        d = i_head
+        e = j_head
+        f = i_head + 1
+        g = j_head
+        h = i_head - 1
+        if a == j_body and b == i_body:
             return 1
-        if i_body == i_head and j_body+1 == j_head:
+        if c == j_body and d == i_body:
             return 0
-        if i_body+1 == i_head and j_body == j_head:
+        if e == j_body and f == i_body:
             return 2
-        if i_body-1 == i_head and j_body == j_head:
+        if g == j_body and h == i_body:
             return 3
     
     def is_move_allowed(self,action):
@@ -171,9 +200,6 @@ class Snake:
         """
         i,j = self.snake[-1]
         snake_tail = self.snake[0:self.snake_length - 2]
-        print("tail: ")
-        print(str(i)+", "+str(j))
-        print(snake_tail)
         if (i,j) in snake_tail or i >= self.number_of_columns or j >= self.number_of_rows or j<0 or i<0 :
             return True
         return False
@@ -198,17 +224,20 @@ class Snake:
         if self.is_move_allowed(action):
             i,j = self.snake[-1]
             if action == 0 :
+                self.heading_to = 0
                 self.snake.append((i,j-1))
             elif action == 1 :
+                self.heading_to = 1
                 self.snake.append((i,j+1))
             elif action == 2 :
+                self.heading_to = 2
                 self.snake.append((i-1,j))
             elif action == 3 :
+                self.heading_to = 3
                 self.snake.append((i+1,j))
             i,j = self.snake[-1]
             if self.is_hit():
                 self.hit = True
-                print("h")
                 return
             else:
                 x0 = i * self.block_height
